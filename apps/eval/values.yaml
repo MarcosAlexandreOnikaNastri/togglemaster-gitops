@@ -10,7 +10,7 @@ base-microservice:
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy.monitoring.svc.cluster.local:4317"
     OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     # REDIS_URL: preenchido por scripts/sync-infra-values.sh (terraform output redis_url)
-    REDIS_URL: "redis://togglemaster-dev-redis.sjjybo.ng.0001.use1.cache.amazonaws.com:6379"
+    REDIS_URL: "redis://togglemaster-dev-redis.8qqpei.ng.0001.use1.cache.amazonaws.com:6379"
     FLAG_SERVICE_URL: "http://flag-service.flag-service.svc.cluster.local:8002"
     TARGETING_SERVICE_URL: "http://targeting-service.targeting-service.svc.cluster.local:8003"
     AWS_REGION: us-east-1
