@@ -1,0 +1,30 @@
+# Traces. Single binary, storage local em emptyDir (sem EBS CSI).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tempo
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: monitoring
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: tempo
+      targetRevision: 1.24.4
+      helm:
+        releaseName: tempo
+        valueFiles:
+          - $values/monitoring/tempo/values.yaml
+    - repoURL: https://github.com/MarcosAlexandreOnikaNastri/togglemaster-gitops.git
+      targetRevision: main
+      ref: values

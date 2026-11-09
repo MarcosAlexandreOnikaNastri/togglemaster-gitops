@@ -1,0 +1,32 @@
+# Coletor unico (decisao do plano). Recebe OTLP dos 5 servicos em alloy.monitoring:4317/4318.
+# traces -> Tempo; o Alloy gera spanmetrics e grafo de servicos -> Prometheus; logs OTLP -> Loki; logs dos pods -> Loki.
+# O destino Datadog entra na etapa final (runbook-01, etapa 6).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alloy
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: monitoring
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: alloy
+      targetRevision: 1.15.0
+      helm:
+        releaseName: alloy
+        valueFiles:
+          - $values/monitoring/alloy/values.yaml
+    - repoURL: https://github.com/MarcosAlexandreOnikaNastri/togglemaster-gitops.git
+      targetRevision: main
+      ref: values

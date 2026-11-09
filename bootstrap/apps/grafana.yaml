@@ -1,0 +1,32 @@
+# Grafana com datasources provisionados (Prometheus, Loki, Tempo). Dashboards e
+# regras de alerta entram na etapa seguinte. Senha admin vem do secret
+# grafana-admin (kubectl create secret, nada no Git).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: monitoring
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: grafana
+      targetRevision: 10.5.15
+      helm:
+        releaseName: grafana
+        valueFiles:
+          - $values/monitoring/grafana/values.yaml
+    - repoURL: https://github.com/MarcosAlexandreOnikaNastri/togglemaster-gitops.git
+      targetRevision: main
+      ref: values

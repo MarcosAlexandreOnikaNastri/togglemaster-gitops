@@ -1,0 +1,20 @@
+base-microservice:
+  name: auth-service
+  port: 8001
+  env:
+    # OTLP -> Alloy (namespace monitoring)
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy.monitoring.svc.cluster.local:4317"
+    OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+  image:
+    # preenchido por scripts/sync-infra-values.sh apos o terraform apply;
+    # sobrescrito pelo job gitops-writeback a cada push na main
+    repository: "231629457134.dkr.ecr.us-east-1.amazonaws.com/togglemaster/auth-service"
+    tag: "v1.0.0-991d81d"
+  ingress:
+    path: /auth(/|$)(.*)
+  externalSecret:
+    enabled: true
+    remoteRef: togglemaster/auth
+    keys:
+      - DATABASE_URL
+      - MASTER_KEY

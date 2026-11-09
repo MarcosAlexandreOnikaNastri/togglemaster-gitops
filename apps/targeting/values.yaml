@@ -1,0 +1,18 @@
+base-microservice:
+  name: targeting-service
+  port: 8003
+  image:
+    repository: "231629457134.dkr.ecr.us-east-1.amazonaws.com/togglemaster/targeting-service"
+    tag: "v1.0.0-fd0f82a"
+  env:
+    # OTLP -> Alloy (namespace monitoring)
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy.monitoring.svc.cluster.local:4317"
+    OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    AUTH_SERVICE_URL: "http://auth-service.auth-service.svc.cluster.local:8001"
+  ingress:
+    path: /rules(/|$)(.*)
+  externalSecret:
+    enabled: true
+    remoteRef: togglemaster/targeting
+    keys:
+      - DATABASE_URL
